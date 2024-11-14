@@ -4,7 +4,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: "Poppins", sans-serif; 
+    font-family: "Spartan", sans-serif; 
 }
 
 :root {
@@ -46,7 +46,7 @@ body {
     font-size: 3rem;
     width: fit-content;
     background-clip: text;
-    background: linear-gradient(to right, #9a03ff,#475aff);
+    background: linear-gradient(to right, #003366,#bfe4f9);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     
@@ -89,7 +89,6 @@ body {
 
 .suggestion-list .suggestion .text {
     font-weight: 400;
-
 }
 
 .suggestion-list .suggestion .icon {
@@ -172,10 +171,14 @@ body {
 }
 
 .chat-list .loading-indicator {
-    display: flex;
+    display: none;
     width: 100%;
     gap: 0.8rem;
     flex-direction: column;
+}
+
+.chat-list .message.loading .loading-indicator {
+    display: flex;
 }
 
 .chat-list .loading-indicator .loading-bar {
