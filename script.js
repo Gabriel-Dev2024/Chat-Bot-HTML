@@ -12,7 +12,7 @@ const loadLocalStorageData = () => {
     const isLightMode = (localStorage.getItem('themeColor') === 'light-mode');
 
     document.body.classList.toggle('light-mode', isLightMode);
-    toggleThemeButton.innerHTML = isLightMode ? 'dark-mode' : 'light-mode';
+    toggleThemeButton.textContent = isLightMode ? 'dark_mode' : 'light_mode';
 
     chatList.innerHTML = savedChats || '';
     chatList.scrollTo(0, chatList.scrollHeight);
@@ -23,7 +23,16 @@ loadLocalStorageData();
 const createMessageElement = (content, ...classes) => {
     const div = document.createElement('div');
     div.classList.add('message', ...classes);
-    div.innerHTML = content;
+
+    try {
+        const rawHtml = marked.parse(content || ""); // Converte Markdown para HTML
+        const sanitizedHtml = DOMPurify.sanitize(rawHtml); // Limpa o HTML gerado
+        div.innerHTML = sanitizedHtml;
+    } catch (error) {
+        console.error("Erro ao processar Markdown:", error);
+        div.textContent = content; // Mostra texto puro em caso de erro
+    }
+
     return div;
 };
 
@@ -44,7 +53,6 @@ const showTypingEffect = (text, textElement, incomingMessageDiv) => {
         };
     }, 75);
 };
-
 
 const generateAPIResponse = async (incomingMessageDiv) => {
     const textElement = await incomingMessageDiv.querySelector(".text");
@@ -128,11 +136,13 @@ const handleOutGoingChat = () => {
     setTimeout(showLoadingAnimation, 500);
 };
 
-const toggleTheme = () => {
+toggleThemeButton.addEventListener('click', () => {
     const isLightMode = document.body.classList.toggle('light-mode');
     localStorage.setItem('themeColor', isLightMode ? 'light-mode' : 'dark-mode');
-    toggleThemeButton.innerHTML = isLightMode ? 'dark-mode' : 'light-mode';
-};
+
+    // Alterar o texto do ícone para 'dark_mode' ou 'light_mode'
+    toggleThemeButton.textContent = isLightMode ? 'dark_mode' : 'light_mode';
+});
 
 typingForm.addEventListener('submit', (e) => {
     e.preventDefault();
