@@ -4,8 +4,38 @@ const suggestions = document.querySelectorAll('.suggestion-list .suggestion');
 const toggleThemeButton = document.querySelector('#toggle-theme-button');
 const deleteChatButton = document.querySelector('#delete-chat-button');
 
+const subtitle = document.querySelector('.subtitle');
+
 let userMessage = null;
 let isResponseGenerating = false;
+
+let subtitleTexts = [
+    "Olá! Bem-vindo(a)! Como posso ajudar você hoje?",
+    "Oi! Estou aqui para tornar seu dia mais fácil. O que você precisa?",
+    "Bem-vindo(a)! Sou seu assistente virtual, pronto para responder suas perguntas.",
+    "Olá! Que bom te ver por aqui! Vamos começar?",
+    "Oi! Precisa de ajuda? Estou aqui para o que você precisar.",
+    "Bem-vindo(a)! Pronto para explorar? Vamos nessa!",
+    "Olá! Estou aqui para facilitar sua vida. O que você gostaria de saber ou fazer?",
+    "Oi! Meu objetivo é ajudar você. Pergunte o que quiser!",
+    "Bem-vindo(a) ao nosso espaço! Vamos transformar dúvidas em soluções?",
+    "Olá! Fique à vontade para conversar comigo. Estou aqui para ajudar!",
+    "Como posso ajudar?",
+    "Vamos começar?",
+    "Precisa de algo?",
+    "Estou aqui para ajudar!",
+    "O que deseja saber?",
+    "Pronto para explorar!",
+    "Fale comigo!",
+    "Dúvidas? Pergunte!",
+    "Conte comigo!",
+    "Vamos lá!"
+];
+
+const updateSubtitle = () => {
+    const randomIndex = Math.floor(Math.random() * subtitleTexts.length);
+    subtitle.textContent = subtitleTexts[randomIndex];
+}
 
 const API_KEY = 'AIzaSyBditdh8-JKnA7FkrDyGFicOf4xQOljePs';
 const API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${API_KEY}`;
@@ -21,6 +51,8 @@ const loadLocalStorageData = () => {
 
     document.body.classList.toggle('hide-header', savedChats);
     chatList.scrollTo(0, chatList.scrollHeight);
+
+    updateSubtitle();
 };
 
 loadLocalStorageData();
@@ -28,15 +60,7 @@ loadLocalStorageData();
 const createMessageElement = (content, ...classes) => {
     const div = document.createElement('div');
     div.classList.add('message', ...classes);
-
-    try {
-        const rawHtml = marked.parse(content || ""); // Converte Markdown para HTML
-        const sanitizedHtml = DOMPurify.sanitize(rawHtml); // Limpa o HTML gerado
-        div.innerHTML = sanitizedHtml;
-    } catch (error) {
-        console.error("Erro ao processar Markdown:", error);
-        div.textContent = content; // Mostra texto puro em caso de erro
-    }
+    div.innerHTML = content;
 
     return div;
 };
