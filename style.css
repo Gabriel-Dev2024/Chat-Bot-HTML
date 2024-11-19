@@ -82,14 +82,14 @@ body.hide-header .header {
     font-size: 3rem;
     width: fit-content;
     background-clip: text;
-    background: linear-gradient(to right, #003366,#bfe4f9);
+    background: linear-gradient(to right, #4285f4, #d96570);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
 .header .subtitle {
     font-size: 1.5rem;
-    color: var(--subheading-color);
+    color: var(--text-color);
 }
 
 .suggestion-list {
