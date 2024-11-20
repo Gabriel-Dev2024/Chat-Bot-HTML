@@ -3,6 +3,8 @@ const chatList = document.querySelector('.chat-list');
 const suggestions = document.querySelectorAll('.suggestion-list .suggestion');
 const toggleThemeButton = document.querySelector('#toggle-theme-button');
 const deleteChatButton = document.querySelector('#delete-chat-button');
+const menuToggle = document.querySelector('.menu-toggle');
+const sidebar = document.querySelector('.sidebar');
 
 const subtitle = document.querySelector('.subtitle');
 
@@ -201,4 +203,8 @@ typingForm.addEventListener('submit', (e) => {
     e.preventDefault();
 
     handleOutGoingChat();
+});
+
+menuToggle.addEventListener('click', () => {
+    sidebar.classList.toggle('active');
 });
