@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Assistent</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+    @import url("https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&family=Poppins:wght@400;500;600&display=swap");
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "League spartan", sans-serif;
+    }
+
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: #444;
+        background-size: cover;
+        background-position: center;
+    }
+
+    .welcome {
+        width: 420px;
+        background: transparent;
+        border: 2px solid rgba(255, 255, 255, .2);
+        backdrop-filter: blur(20px);
+        box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+        color: black;
+        border-radius: 10px;
+        padding: 80px 70px;
+    }
+
+    .welcome h1 {
+        font-size: 60px;
+        text-align: center;
+    }
+
+    .welcome p {
+        font-size: 25px;
+        text-align: center;
+    }
+
+    .welcome .btn {
+        width: 100%;
+        height: 30px;
+        background: #003366;
+        border: none;
+        outline: none;
+        border-radius: 40px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+        cursor: pointer;
+        font-size: 16px;
+        margin-top: 100px;
+    }
+
+    .welcome .btn2 {
+        width: 100%;
+        height: 30px;
+        background: #003366;
+        border: none;
+        outline: none;
+        border-radius: 40px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+        cursor: pointer;
+        font-size: 16px;
+        margin-top: 25px;
+    }
+
+    .welcome .btn:hover {
+        background: transparent;
+    }
+    </style>
+</head>
+<body>
+    
+    <div class="welcome">
+        <h1>Education Assistant</h1>
+        <p>Assistente educacional</p>
+
+        <div>
+            <button type="button" class="btn" id="enter-button">Entrar</button>
+            <button type="submit" class="btn2">Criar Conta</button>
+        </div>
+    </div>
+
+    <script>
+        const enterButton = document.getElementById('enter-button');
+
+        enterButton.addEventListener('click', () => {
+            // Abre uma nova aba para a página de reconhecimento facial
+            window.open('camera.html', '_blank');
+        });
+    </script>
+</body>
+</html>
