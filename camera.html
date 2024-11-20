@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro Facial</title>
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js"></script>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #000;
+        }
+
+        video {
+            border: 2px solid #fff;
+            border-radius: 10px;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background: #003366;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0055a5;
+        }
+    </style>
+</head>
+<body>
+    <video id="video" autoplay muted></video>
+    <button id="register-button">Cadastrar Rosto</button>
+    <button id="recognize-button">Reconhecer Rosto</button>
+
+    <script>
+        const video = document.getElementById('video');
+        const registerButton = document.getElementById('register-button');
+        const recognizeButton = document.getElementById('recognize-button');
+
+        let labeledDescriptors = []; // Lista para armazenar os descritores cadastrados
+
+        // Carrega os modelos necessários
+        async function loadModels() {
+            await faceapi.nets.tinyFaceDetector.loadFromUri('/models');
+            await faceapi.nets.faceLandmark68Net.loadFromUri('/models');
+            await faceapi.nets.faceRecognitionNet.loadFromUri('/models');
+            console.log("Modelos carregados!");
+        }
+
+        // Inicia a câmera
+        async function startVideo() {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
+            video.srcObject = stream;
+        }
+
+        // Extrai e salva descritores faciais
+        async function registerFace() {
+            const detections = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
+
+            if (!detections) {
+                alert("Nenhum rosto detectado. Tente novamente.");
+                return;
+            }
+
+            const label = prompt("Digite o nome para cadastrar o rosto:");
+            if (!label) {
+                alert("Cadastro cancelado.");
+                return;
+            }
+
+            labeledDescriptors.push(new faceapi.LabeledFaceDescriptors(label, [detections.descriptor]));
+            alert(`Rosto cadastrado para ${label}!`);
+        }
+
+        // Reconhece rostos cadastrados
+        async function recognizeFace() {
+            const detections = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
+
+            if (!detections) {
+                alert("Nenhum rosto detectado. Tente novamente.");
+                return;
+            }
+
+            const faceMatcher = new faceapi.FaceMatcher(labeledDescriptors, 0.6); // Tolerância de 0.6
+            const bestMatch = faceMatcher.findBestMatch(detections.descriptor);
+
+            alert(bestMatch.toString());
+        }
+
+        // Inicializa a câmera e os eventos
+        async function init() {
+            await loadModels();
+            await startVideo();
+
+            registerButton.addEventListener('click', registerFace);
+            recognizeButton.addEventListener('click', recognizeFace);
+        }
+
+        init();
+    </script>
+</body>
+</html>
