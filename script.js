@@ -13,15 +13,10 @@ let isResponseGenerating = false;
 
 let subtitleTexts = [
     "Olá! Bem-vindo(a)! Como posso ajudar você hoje?",
-    "Oi! Estou aqui para tornar seu dia mais fácil. O que você precisa?",
-    "Bem-vindo(a)! Sou seu assistente virtual, pronto para responder suas perguntas.",
     "Olá! Que bom te ver por aqui! Vamos começar?",
     "Oi! Precisa de ajuda? Estou aqui para o que você precisar.",
     "Bem-vindo(a)! Pronto para explorar? Vamos nessa!",
-    "Olá! Estou aqui para facilitar sua vida. O que você gostaria de saber ou fazer?",
     "Oi! Meu objetivo é ajudar você. Pergunte o que quiser!",
-    "Bem-vindo(a) ao nosso espaço! Vamos transformar dúvidas em soluções?",
-    "Olá! Fique à vontade para conversar comigo. Estou aqui para ajudar!",
     "Como posso ajudar?",
     "Vamos começar?",
     "Precisa de algo?",
@@ -62,7 +57,9 @@ loadLocalStorageData();
 const createMessageElement = (content, ...classes) => {
     const div = document.createElement('div');
     div.classList.add('message', ...classes);
-    div.innerHTML = content;
+
+    const htmlContent = marked.parse(content);
+    div.innerHTML = htmlContent;
 
     return div;
 };
@@ -232,3 +229,14 @@ typingInput.addEventListener('input', () => {
         ? 'auto' 
         : 'hidden';
 });
+
+marked.setOptions({
+    breaks: true, // Suporta quebras de linha com apenas ENTER
+    gfm: true,    // Ativa suporte para GitHub Flavored Markdown
+    headerIds: false, // Desativa IDs automáticos em headers
+    mangle: false // Evita obfuscar e-mails
+});
+
+const markdownText = "### Exemplo\nTexto **Markdown** com [link](https://example.com)";
+const html = marked(markdownText);
+console.log(html);
