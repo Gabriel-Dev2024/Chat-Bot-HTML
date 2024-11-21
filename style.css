@@ -6,6 +6,7 @@
     box-sizing: border-box;
     font-family: "Spartan", sans-serif;
     line-height: 1.5;
+    transition: background-color 0.2s ease, color 0.2s ease; 
 }
 
 :root {
@@ -16,6 +17,7 @@
     --primary-color: #003366;
     --secondary-color: #313131;
     --secondary-hover-color: #444;
+    --loading-color: #a4dafa;
 }
 
 .light-mode {
@@ -26,6 +28,7 @@
     --primary-color: #a4dafa;
     --secondary-color: #E9EEF6;
     --secondary-hover-color: #DBE1EA;
+    --loading-color: #475aff;
 }
 
 body {
@@ -88,8 +91,9 @@ body.hide-header .header {
 }
 
 .header .subtitle {
-    font-size: 1.5rem;
-    color: var(--text-color);
+    margin-top: 30px;
+    font-size: 2rem;
+    color: var(--subheading-color);
 }
 
 .suggestion-list {
@@ -230,7 +234,7 @@ body.hide-header .header {
     height: 11px;
     width: 100%;
     border-radius: 0.14rem;
-    background: linear-gradient(to right, #475aff, var(--primary-color), #475aff);
+    background: linear-gradient(to right, var(--loading-color) , var(--primary-color), var(--loading-color));
     animation: animate 2.5s linear infinite;
 
 }
@@ -248,12 +252,31 @@ body.hide-header .header {
     }
 }
 
+.typing-input {
+    resize: none; /* Impede o redimensionamento manual */
+    overflow-y: hidden; /* Oculta o scroll inicialmente */
+    min-height: 56px; /* Altura mínima */
+    max-height: 150px; /* Altura máxima */
+    width: 100%; /* Largura total */
+    font-size: 1rem;
+    padding: 10px;
+    border-radius: 10px;
+    background: var(--secondary-color);
+    color: var(--text-color);
+    outline: none;
+    border: none;
+    position: absolute; /* Para que possa crescer para cima */
+    bottom: 0; /* Alinha a caixa com a parte inferior */
+    box-shadow: 0px -4px 6px rgba(0, 0, 0, 0.1); /* Opcional: sombra para destacar */
+}
+
 .typing-area {
     position: fixed;
     width: 100%;
     bottom: 0;
     padding: 1rem;
     background: var(--primary-color);
+    align-items: center;
 }
 
 .typing-area :where(.typing-form, .action-buttons) {

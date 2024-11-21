@@ -5,8 +5,8 @@ const toggleThemeButton = document.querySelector('#toggle-theme-button');
 const deleteChatButton = document.querySelector('#delete-chat-button');
 const menuToggle = document.querySelector('.menu-toggle');
 const sidebar = document.querySelector('.sidebar');
-
 const subtitle = document.querySelector('.subtitle');
+const typingInput = document.querySelector('.typing-input');
 
 let userMessage = null;
 let isResponseGenerating = false;
@@ -195,7 +195,14 @@ toggleThemeButton.addEventListener('click', () => {
 deleteChatButton.addEventListener('click', () => {
     if (confirm('Você tem certeza que quer apagar as mensagens?')) {
         localStorage.removeItem('savedChats');
+
+        isResponseGenerating = false;
+        userMessage = '';
+        typingForm.querySelector('.typing-input').value = '';
+
         loadLocalStorageData();
+
+        chatList.scrollTo(0, chatList.scrollHeight);
     }
 });
 
@@ -205,6 +212,23 @@ typingForm.addEventListener('submit', (e) => {
     handleOutGoingChat();
 });
 
+typingForm.querySelector('.typing-input').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {  // Verifica se foi "Enter" sem "Shift" (para evitar quebra de linha)
+        e.preventDefault();  // Evita a quebra de linha (comportamento padrão do "Enter")
+        handleOutGoingChat();  // Envia a mensagem
+    }
+});
+
 menuToggle.addEventListener('click', () => {
     sidebar.classList.toggle('active');
+});
+
+typingInput.addEventListener('input', () => {
+    typingInput.style.height = 'auto';
+
+    typingInput.style.height = `${typingInput.scrollHeight}px`;
+
+    typingInput.style.overflowY = typingInput.scrollHeight > parseInt(window.getComputedStyle(typingInput).maxHeight) 
+        ? 'auto' 
+        : 'hidden';
 });
