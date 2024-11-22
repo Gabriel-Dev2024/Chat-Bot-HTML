@@ -29,6 +29,13 @@ let subtitleTexts = [
     "Vamos lá!"
 ];
 
+marked.setOptions({
+    breaks: true, // Permite quebra de linha simples
+    gfm: true,    // Ativa o suporte para GitHub Flavored Markdown (links, listas, etc.)
+    headerIds: false, // Desativa IDs automáticos em cabeçalhos
+    mangle: false     // Evita a obfuscação de e-mails
+});
+
 const updateSubtitle = () => {
     const randomIndex = Math.floor(Math.random() * subtitleTexts.length);
     subtitle.textContent = subtitleTexts[randomIndex];
@@ -55,26 +62,27 @@ const loadLocalStorageData = () => {
 loadLocalStorageData();
 
 const createMessageElement = (content, ...classes) => {
-    const div = document.createElement('div');
-    div.classList.add('message', ...classes);
-
-    const htmlContent = marked.parse(content);
-    div.innerHTML = htmlContent;
-
-    return div;
+    const messageElement = document.createElement('div');
+    messageElement.classList.add('message', ...classes);
+    messageElement.innerHTML = content;
+    return messageElement;
 };
 
-const showTypingEffect = (text, textElement, incomingMessageDiv) => {
-    const words = text.split(' ');
+const showTypingEffect = (htmlContent, textElement, incomingMessageDiv) => {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = htmlContent;
+
+    const words = htmlContent.split(' ');
     let currentWordIndex = 0;
     textElement.textContent = '';
 
     const typingInterval = setInterval(() => {
-        textElement.textContent += (currentWordIndex === 0 ? '' : ' ') + words[currentWordIndex++];
+        textElement.innerHTML += (currentWordIndex === 0 ? '' : ' ') + words[currentWordIndex++];
         incomingMessageDiv.querySelector('.icon').classList.add('hide');
 
         if (currentWordIndex === words.length) {
             clearInterval(typingInterval);
+            textElement.innerHTML = htmlContent;
             isResponseGenerating = false;
             incomingMessageDiv.querySelector('.icon').classList.remove('hide');
             localStorage.setItem('savedChats', chatList.innerHTML);
@@ -92,34 +100,40 @@ const generateAPIResponse = async (incomingMessageDiv) => {
     }
 
     try {
-        const response = await fetch(API_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                contents: [{
-                    role: "user",
-                    parts: [{ text: userMessage }]
-                }]
-            })
-        });
+        const response = await Promise.race([
+            fetch(API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    contents: [{
+                        role: "user",
+                        parts: [{ text: userMessage }]
+                    }]
+                })
+            }),
+            new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout de resposta da API')), 10000))
+        ]);
 
         const data = await response.json();
-
         if (!response.ok) throw new Error(data.error.message);
 
-        // Get the API response text
-        const apiResponse = data?.candidates[0].content.parts[0].text.replace(/\*\*(.*?)\*\*/g, '$1');
+        const responseText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!responseText) throw new Error('Resposta Invalida da API');
 
-        if (apiResponse) {
-            showTypingEffect(apiResponse, textElement, incomingMessageDiv);
-        } else {
-            textElement.textContent = "Nenhuma resposta recebida"
-        }
+        const parsedHtml = marked.parse(responseText);
+        textElement.innerHTML = parsedHtml;
+
+        // Get the API response text
+        // const apiResponse = data?.candidates[0].content.parts[0].text.replace(/\*\*(.*?)\*\*/g, '$1');
+
+        showTypingEffect(parsedHtml, textElement, incomingMessageDiv);
+
     } catch (err) {
         isResponseGenerating = false;
         textElement.textContent = err.message;
         textElement.classList.add('error');
     } finally {
+        isResponseGenerating = false;
         incomingMessageDiv.classList.remove("loading");
     };
 };
@@ -158,19 +172,20 @@ const handleOutGoingChat = () => {
 
     isResponseGenerating = true;
 
-
     const html = `<div class="message-content">
                     <img src="images/person-icon.webp" alt="User Image" class="avatar">
-                    <p class="text"></p>
+                    <p class="text">${userMessage}</p>
                   </div>`;
 
     const outGoingMessageDiv = createMessageElement(html, 'outgoing');
-    outGoingMessageDiv.querySelector('.text').textContent = userMessage;
     chatList.appendChild(outGoingMessageDiv);
 
-    typingForm.reset();
+    typingForm.querySelector('.typing-input').value = '';
+    typingInput.style.height = 'auto';  
+
     chatList.scrollTo(0, chatList.scrollHeight);
     document.body.classList.add('hide-header');
+
     setTimeout(showLoadingAnimation, 500);
 };
 
@@ -236,7 +251,3 @@ marked.setOptions({
     headerIds: false, // Desativa IDs automáticos em headers
     mangle: false // Evita obfuscar e-mails
 });
-
-const markdownText = "### Exemplo\nTexto **Markdown** com [link](https://example.com)";
-const html = marked(markdownText);
-console.log(html);
