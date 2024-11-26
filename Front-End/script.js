@@ -12,6 +12,9 @@ const typingInput = document.querySelector('.typing-input');
 let userMessage = null;
 let isResponseGenerating = false;
 
+const API_KEY = 'AIzaSyBditdh8-JKnA7FkrDyGFicOf4xQOljePs';
+const API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${API_KEY}`;
+
 let subtitleTexts = [
     "Olá! Bem-vindo(a)! Como posso ajudar você hoje?",
     "Olá! Que bom te ver por aqui! Vamos começar?",
@@ -42,11 +45,8 @@ const updateSubtitle = () => {
     subtitle.textContent = subtitleTexts[randomIndex];
 }
 
-const API_KEY = 'AIzaSyBditdh8-JKnA7FkrDyGFicOf4xQOljePs';
-const API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${API_KEY}`;
-
 const loadLocalStorageData = () => {
-    const savedChats = localStorage.getItem('savedChats');
+    const savedChats = JSON.parse(localStorage.getItem('savedChats') || []);
     const isLightMode = (localStorage.getItem('themeColor') === 'light-mode');
 
     document.body.classList.toggle('light-mode', isLightMode);
@@ -58,6 +58,46 @@ const loadLocalStorageData = () => {
     chatList.scrollTo(0, chatList.scrollHeight);
 
     updateSubtitle();
+
+
+
+    // Recupera as mensagens salvas do localStorage
+    // const savedChats = JSON.parse(localStorage.getItem('savedChats') || '[]');
+    
+    // // Limpa a lista de mensagens antes de adicionar as mensagens salvas
+    // chatList.innerHTML = '';
+
+    // // Itera sobre as mensagens salvas e recria a estrutura HTML
+    // savedChats.forEach(msgContent => {
+    //     const messageElement = document.createElement('div');
+    //     messageElement.classList.add('message', 'incoming');  // Defina a classe conforme necessário
+
+    //     const textElement = document.createElement('p');
+    //     textElement.classList.add('text');
+    //     textElement.innerHTML = msgContent;  // Insere o conteúdo da mensagem salva
+
+    //     messageElement.appendChild(textElement);
+    //     chatList.appendChild(messageElement);
+    // });
+
+    // // Rola para a última mensagem
+    // chatList.scrollTo(0, chatList.scrollHeight);
+
+    // updateSubtitle();  // Atualiza o subtítulo
+};
+
+const saveChatsToLocalStorage = () => {
+    // Cria um array com o conteúdo das mensagens
+    const messages = Array.from(chatList.querySelectorAll('.message')).map(msg => {
+        const textElement = msg.querySelector('.text');
+        if (textElement) {
+            return textElement.innerHTML.trim();  // Salvando o conteúdo dentro do <p class="text">
+        }
+        return '';
+    });
+
+    // Salva as mensagens como um array de strings
+    localStorage.setItem('savedChats', JSON.stringify(messages));
 };
 
 const createMessageElement = (content, ...classes) => {
@@ -96,7 +136,6 @@ const addCopyButtons = () => {
         });
     });
 };
-
 
 const showTypingEffect = (htmlContent, textElement, incomingMessageDiv) => {
     const tempDiv = document.createElement('div');
@@ -217,6 +256,8 @@ const handleOutGoingChat = () => {
     chatList.scrollTo(0, chatList.scrollHeight);
     document.body.classList.add('hide-header');
 
+    saveChatsToLocalStorage();
+
     setTimeout(showLoadingAnimation, 500);
 };
 
@@ -288,5 +329,20 @@ function copyCode() {
         console.error('Erro ao copiar: ', err);
     });
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const body = document.body;
+    const theme = localStorage.getItem('theme');
+    
+    if (theme === 'light') {
+        body.classList.add('light-mode');  // Adiciona o modo claro, se salvo
+    } else {
+        body.classList.remove('light-mode');  // Garantir remoção se estiver salvo como dark
+    }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadLocalStorageData();  // Carrega as mensagens ao inicializar
+});
 
 loadLocalStorageData();

@@ -33,11 +33,13 @@
 
 body {
     background-color: var(--primary-color);
+    color: var(--text-color);
 }
 
 .chat-list .message .text {
     white-space: pre-wrap; /* Para manter quebras de linha do markdown */
     word-wrap: break-word;
+    background-color: var(--secondary-color);
     color: var(--text-color);
 }
 
@@ -126,6 +128,7 @@ body.hide-header .header {
     border-radius: 50%;
     background: var(--primary-color);
 }
+
 .chat-list {
     padding: 2rem 1rem 12rem;
     max-height: calc(100vh - 100px);
@@ -171,8 +174,15 @@ body.hide-header .header {
     padding: 10px;
     max-width: 75%;
     word-wrap: break-word;
+    overflow-wrap: break-word;
     margin-bottom: 10px;
     box-shadow: 0px 2px 4px black;
+    display: block;
+}
+
+.light-mode .chat-list .message .text {
+    background-color: #f0f0f0;  /* Cor clara para o modo light */
+    color: #000;  /* Cor escura para o texto no modo claro */
 }
 
 .chat-list .message .text.error {
@@ -278,6 +288,13 @@ body.hide-header .header {
     position: relative;
 }
 
+.typing-area .input-wrapper .typing-input { 
+    width: 100%;
+    min-height: 56px; /* Garante altura mínima */
+    background: var(--secondary-color);
+    color: var(--text-color);
+}
+
 .typing-area .typing-input {
     width: 100%;
     height: 100%;
@@ -318,6 +335,7 @@ body.hide-header .header {
 .typing-area .icon:hover {
     background: var(--secondary-hover-color);
 }
+
 .typing-area .input-wrapper .icon {
     position: absolute;
     right: 0;
@@ -326,7 +344,7 @@ body.hide-header .header {
     background: none;
     color: var(--text-color);
     transform: scale(0);
-    transition: transforme 0.7s ease;
+    transition: transform 0.7s ease;
 }
 
 .typing-area .input-wrapper .typing-input:valid ~ .icon {
