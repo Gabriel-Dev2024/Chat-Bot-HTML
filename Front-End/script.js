@@ -3,6 +3,7 @@ const chatList = document.querySelector('.chat-list');
 const suggestions = document.querySelectorAll('.suggestion-list .suggestion');
 const toggleThemeButton = document.querySelector('#toggle-theme-button');
 const deleteChatButton = document.querySelector('#delete-chat-button');
+
 const menuToggle = document.querySelector('.menu-toggle');
 const sidebar = document.querySelector('.sidebar');
 const subtitle = document.querySelector('.subtitle');
@@ -59,14 +60,43 @@ const loadLocalStorageData = () => {
     updateSubtitle();
 };
 
-loadLocalStorageData();
-
 const createMessageElement = (content, ...classes) => {
     const messageElement = document.createElement('div');
     messageElement.classList.add('message', ...classes);
     messageElement.innerHTML = content;
     return messageElement;
 };
+
+const addCopyButtons = () => {
+    // Seleciona todos os blocos de código <pre><code>
+    document.querySelectorAll('pre').forEach((preBlock) => {
+        // Verifica se o botão já foi adicionado
+        if (preBlock.querySelector('.copy-button')) return;
+
+        // Cria o botão de copiar
+        const button = document.createElement('button');
+        button.classList.add('copy-button');
+        button.textContent = 'Copiar';
+
+        // Configura o posicionamento do bloco <pre> para suportar o botão
+        preBlock.style.position = 'relative';
+
+        // Adiciona o botão ao bloco <pre>
+        preBlock.appendChild(button);
+
+        // Evento para copiar o conteúdo do bloco de código
+        button.addEventListener('click', () => {
+            const codeContent = preBlock.querySelector('code').innerText;
+            navigator.clipboard.writeText(codeContent).then(() => {
+                button.textContent = 'Copiado!';
+                setTimeout(() => button.textContent = 'Copiar', 1500);
+            }).catch(err => {
+                console.error('Erro ao copiar: ', err);
+            });
+        });
+    });
+};
+
 
 const showTypingEffect = (htmlContent, textElement, incomingMessageDiv) => {
     const tempDiv = document.createElement('div');
@@ -87,6 +117,11 @@ const showTypingEffect = (htmlContent, textElement, incomingMessageDiv) => {
             incomingMessageDiv.querySelector('.icon').classList.remove('hide');
             localStorage.setItem('savedChats', chatList.innerHTML);
             chatList.scrollTo(0, chatList.scrollHeight);
+
+            // Verifica se o conteúdo contém <pre><code> e adiciona o botão de copiar se necessário
+            if (tempDiv.querySelector('pre code')) {
+                addCopyButtons();  // Chama a função que adiciona o botão de copiar aos blocos de código
+            }
         };
     }, 75);
 };
@@ -123,9 +158,6 @@ const generateAPIResponse = async (incomingMessageDiv) => {
         const parsedHtml = marked.parse(responseText);
         textElement.innerHTML = parsedHtml;
 
-        // Get the API response text
-        // const apiResponse = data?.candidates[0].content.parts[0].text.replace(/\*\*(.*?)\*\*/g, '$1');
-
         showTypingEffect(parsedHtml, textElement, incomingMessageDiv);
 
     } catch (err) {
@@ -158,7 +190,6 @@ const showLoadingAnimation = () => {
 };
 
 const copyMessage = (copyIcon) => {
-    console.log('Ola');
     const messageText = copyIcon.parentElement.querySelector(".text").innerHTML;
 
     navigator.clipboard.writeText(messageText);
@@ -245,9 +276,17 @@ typingInput.addEventListener('input', () => {
         : 'hidden';
 });
 
-marked.setOptions({
-    breaks: true, // Suporta quebras de linha com apenas ENTER
-    gfm: true,    // Ativa suporte para GitHub Flavored Markdown
-    headerIds: false, // Desativa IDs automáticos em headers
-    mangle: false // Evita obfuscar e-mails
-});
+function copyCode() {
+    // Seleciona o bloco de código
+    const codeBlock = document.getElementById('code-block');
+    const textToCopy = codeBlock.innerText; // Pega o conteúdo do bloco de código
+
+    // Usa a API do Clipboard para copiar o texto
+    navigator.clipboard.writeText(textToCopy).then(() => {
+        alert('Código copiado com sucesso!');
+    }).catch(err => {
+        console.error('Erro ao copiar: ', err);
+    });
+}
+
+loadLocalStorageData();

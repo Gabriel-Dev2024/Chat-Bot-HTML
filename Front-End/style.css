@@ -142,6 +142,7 @@ body.hide-header .header {
     gap: 1.5rem;
     width: 100%;
     align-items: center;
+    margin-top: 35px;
 }
 
 .chat-list .message .avatar {
@@ -227,6 +228,7 @@ body.hide-header .header {
 .chat-list .loading-indicator .loading-bar:last-child {
     width: 70%;
 }
+
 @keyframes animate {
     0% {
         background-position: -800px 0;
@@ -479,84 +481,72 @@ body:not(.light-mode) {
 }
 
 
-/* Estilos básicos para conteúdo Markdown */
-.text {
-    color: #333;  /* Cor padrão do texto */
-    line-height: 1.6;
-}
-
-/* Garantir que o texto convertido seja visível */
-.text {
+/* Estilos para o conteúdo do chat */
+.incoming .text, .outgoing .text {
     color: #ffffff;  /* Cor do texto branco */
     background-color: #2c2c2c;  /* Fundo escuro */
     line-height: 1.6;
 }
 
-/* Ajuste para links */
-.text a {
-    color: #66b3ff;  /* Azul claro */
-    text-decoration: underline;
-}
-
-/* Blocos de código */
-.text pre {
-    background-color: #1e1e1e;
-    color: #f5f5f5;
+/* Blocos de código dentro das respostas do chat */
+.incoming .text pre, .outgoing .text pre {
+    position: relative;
+    background-color: #1e1e1e; /* Fundo escuro */
+    color: #f5f5f5;  /* Texto claro */
     padding: 10px;
     border-radius: 5px;
     overflow-x: auto;
+    font-family: 'Courier New', Courier, monospace; /* Fonte monoespaçada */
 }
 
-/* Estilos para cabeçalhos */
-.text h1 { font-size: 24px; color: #222; }
-.text h2 { font-size: 20px; color: #444; }
-.text h3 { font-size: 18px; color: #555; }
+/* Estilos para cabeçalhos nas respostas do chat */
+.incoming .text h1, .outgoing .text h1 { font-size: 24px; color: #f0f0f0; }
+.incoming .text h2, .outgoing .text h2 { font-size: 22px; color: #cccccc; }
+.incoming .text h3, .outgoing .text h3 { font-size: 20px; color: #aaaaaa; }
 
-/* Estilos para links */
-.text a {
+/* Estilos para links dentro das respostas do chat */
+.incoming .text a, .outgoing .text a {
     color: #007BFF;
     text-decoration: none;
 }
-.text a:hover {
+.incoming .text a:hover, .outgoing .text a:hover {
     text-decoration: underline;
 }
 
-/* Estilos para listas */
-.text ul, .text ol {
-    margin-left: 20px;
-}
-
-/* Estilos para blocos de código */
-.text pre {
-    background-color: #f5f5f5;
-    padding: 10px;
-    border-radius: 5px;
-    overflow-x: auto;
-}
-.text code {
-    background-color: #f0f0f0;
-    padding: 2px 4px;
-    border-radius: 3px;
-}
-
-/* Cabeçalhos */
-.text h1 { font-size: 24px; color: #f0f0f0; }
-.text h2 { font-size: 22px; color: #cccccc; }
-.text h3 { font-size: 20px; color: #aaaaaa; }
-
-/* Listas */
-.text ul, .text ol {
+/* Estilos para listas nas respostas do chat */
+.incoming .text ul, .outgoing .text ul, .incoming .text ol, .outgoing .text ol {
     margin-left: 20px;
     padding-left: 20px;
 }
-.text li {
+.incoming .text li, .outgoing .text li {
     margin-bottom: 8px;
 }
 
-/* Código inline */
-.text code {
-    background-color: #444;
+/* Estilos para código inline nas respostas do chat */
+.incoming .text code, .outgoing .text code {
+    background-color: #444;  /* Fundo escuro para código inline */
     padding: 2px 4px;
     border-radius: 4px;
-    color: #ffcc99;
+    color: #ffcc99;  /* Tom de laranja para contraste */
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.copy-button {
+    position: absolute;
+    top: 8px;          /* Distância do topo */
+    right: 8px;        /* Distância da direita */
+    background-color: rgba(0, 0, 0, 0.7); /* Fundo com leve transparência */
+    color: white;      /* Cor do texto */
+    border: none;      /* Remove bordas */
+    padding: 6px 10px; /* Espaçamento interno */
+    border-radius: 5px; /* Borda arredondada */
+    cursor: pointer;   /* Cursor em forma de mão */
+    font-size: 12px;   /* Tamanho da fonte */
+    opacity: 0;        /* Inicialmente invisível */
+    transition: opacity 0.3s; /* Animação de transição */
+}
+
+/* Mostrar o botão quando o mouse estiver sobre o bloco de código */
+pre:hover .copy-button {
+    opacity: 1;        /* Torna o botão visível */
 }
