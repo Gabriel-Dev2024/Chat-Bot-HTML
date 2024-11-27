@@ -6,7 +6,7 @@ from PIL import Image, ImageTk
 import webbrowser
 
 # Configuração do classificador e reconhecedor
-classific = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")  # Classificador de faces
+classific = cv2.CascadeClassifier("./Back-End/haarcascade_frontalface_default.xml")  # Classificador de faces
 reconhecedor = cv2.face.EigenFaceRecognizer()
 reconhecedor.read("classificadorEigen.yml")  # Modelo treinado para identificar faces
 largura, altura = 220, 220

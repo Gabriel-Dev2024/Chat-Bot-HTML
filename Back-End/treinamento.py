@@ -7,7 +7,7 @@ eigeface = cv2.face.EigenFaceRecognizer_create(num_components=50)
 #lbph = cv2.face.LBPHFaceRecognizer_create()
 
 def getImagensComId():
-    caminhos = [os.path.join('fotos',f) for f in os.listdir('fotos')]
+    caminhos = [os.path.join('./Back-End/Fotos',f) for f in os.listdir('./Back-End/Fotos')]
     #print(caminhos)
     faces = []
     ids = []

@@ -18,7 +18,7 @@ while True:
         cv2.rectangle(imagem, (x,y), (x + l, y + a), (0,0,255))
         if cv2.waitKey(1) & 0xFF == ord('q'):
             imagemface = cv2.resize(imagemCinza[y:y + a, x:x + l], (largura, altura))
-            cv2.imwrite("fotos/pessoas." + str(id) + "." + str(amostra) + ".jpg", imagemface)
+            cv2.imwrite("./Back-End/Fotos/pessoas." + str(id) + "." + str(amostra) + ".jpg", imagemface)
             print("[foto " + str(amostra) + "capturada com sucesso")
             amostra += 1
 
