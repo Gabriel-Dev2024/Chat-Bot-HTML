@@ -358,33 +358,6 @@ body.hide-header .header {
     color: var(--placeholder-color);
 }
 
-.menu-bar {
-    display: flex;
-    align-items: center;
-    padding: 10px 20px;
-}
-
-.menu-toggle {
-    position: fixed;
-    top: 10px;
-    left: 20px;
-    background-color: var(--secondary-color);
-    color: #ecf0f1;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    z-index: 1100;
-    display: flex;
-    align-items: center;
-    margin-top: 15px;
-}
-
-.menu-toggle .icon {
-    font-size: 24px;
-    color: currentColor; /* Cor herdada do tema */
-    transition: color 0.3s ease; /* Transição suave ao trocar o tema */
-}
-
 body.light-mode {
     --menu-icon-color: #0c0c0c; /* Cor preta no tema claro */
 }

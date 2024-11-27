@@ -4,8 +4,6 @@ const suggestions = document.querySelectorAll('.suggestion-list .suggestion');
 const toggleThemeButton = document.querySelector('#toggle-theme-button');
 const deleteChatButton = document.querySelector('#delete-chat-button');
 
-const menuToggle = document.querySelector('.menu-toggle');
-const sidebar = document.querySelector('.sidebar');
 const subtitle = document.querySelector('.subtitle');
 const typingInput = document.querySelector('.typing-input');
 
@@ -46,7 +44,7 @@ const updateSubtitle = () => {
 }
 
 const loadLocalStorageData = () => {
-    const savedChats = JSON.parse(localStorage.getItem('savedChats') || []);
+    const savedChats = localStorage.getItem('savedChats');
     const isLightMode = (localStorage.getItem('themeColor') === 'light-mode');
 
     document.body.classList.toggle('light-mode', isLightMode);
@@ -58,47 +56,9 @@ const loadLocalStorageData = () => {
     chatList.scrollTo(0, chatList.scrollHeight);
 
     updateSubtitle();
-
-
-
-    // Recupera as mensagens salvas do localStorage
-    // const savedChats = JSON.parse(localStorage.getItem('savedChats') || '[]');
-    
-    // // Limpa a lista de mensagens antes de adicionar as mensagens salvas
-    // chatList.innerHTML = '';
-
-    // // Itera sobre as mensagens salvas e recria a estrutura HTML
-    // savedChats.forEach(msgContent => {
-    //     const messageElement = document.createElement('div');
-    //     messageElement.classList.add('message', 'incoming');  // Defina a classe conforme necessário
-
-    //     const textElement = document.createElement('p');
-    //     textElement.classList.add('text');
-    //     textElement.innerHTML = msgContent;  // Insere o conteúdo da mensagem salva
-
-    //     messageElement.appendChild(textElement);
-    //     chatList.appendChild(messageElement);
-    // });
-
-    // // Rola para a última mensagem
-    // chatList.scrollTo(0, chatList.scrollHeight);
-
-    // updateSubtitle();  // Atualiza o subtítulo
 };
 
-const saveChatsToLocalStorage = () => {
-    // Cria um array com o conteúdo das mensagens
-    const messages = Array.from(chatList.querySelectorAll('.message')).map(msg => {
-        const textElement = msg.querySelector('.text');
-        if (textElement) {
-            return textElement.innerHTML.trim();  // Salvando o conteúdo dentro do <p class="text">
-        }
-        return '';
-    });
-
-    // Salva as mensagens como um array de strings
-    localStorage.setItem('savedChats', JSON.stringify(messages));
-};
+loadLocalStorageData();
 
 const createMessageElement = (content, ...classes) => {
     const messageElement = document.createElement('div');
@@ -256,8 +216,6 @@ const handleOutGoingChat = () => {
     chatList.scrollTo(0, chatList.scrollHeight);
     document.body.classList.add('hide-header');
 
-    saveChatsToLocalStorage();
-
     setTimeout(showLoadingAnimation, 500);
 };
 
@@ -303,10 +261,6 @@ typingForm.querySelector('.typing-input').addEventListener('keydown', (e) => {
     }
 });
 
-menuToggle.addEventListener('click', () => {
-    sidebar.classList.toggle('active');
-});
-
 typingInput.addEventListener('input', () => {
     typingInput.style.height = 'auto';
 
@@ -329,20 +283,3 @@ function copyCode() {
         console.error('Erro ao copiar: ', err);
     });
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    const body = document.body;
-    const theme = localStorage.getItem('theme');
-    
-    if (theme === 'light') {
-        body.classList.add('light-mode');  // Adiciona o modo claro, se salvo
-    } else {
-        body.classList.remove('light-mode');  // Garantir remoção se estiver salvo como dark
-    }
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-    loadLocalStorageData();  // Carrega as mensagens ao inicializar
-});
-
-loadLocalStorageData();
