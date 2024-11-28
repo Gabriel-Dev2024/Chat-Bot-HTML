@@ -50,13 +50,41 @@ const loadLocalStorageData = () => {
     document.body.classList.toggle('light-mode', isLightMode);
     toggleThemeButton.textContent = isLightMode ? 'dark_mode' : 'light_mode';
 
-    chatList.innerHTML = savedChats || '';
+    chatList.innerHTML = ''; // Limpa o chat antes de adicionar mensagens salvas
 
-    document.body.classList.toggle('hide-header', savedChats);
+    // Se não houver chats salvos, volta para a tela inicial
+    if (!savedChats) {
+        document.body.classList.remove('hide-header'); // Garante que o cabeçalho esteja visível
+        updateSubtitle(); // Atualiza o título com uma mensagem aleatória
+        return;
+    }
+
+    // Se houver mensagens, carrega e exibe
+    try {
+        const messages = JSON.parse(savedChats);
+        if (Array.isArray(messages)) {
+            messages.forEach(msg => {
+                const html = `<div class="message-content">
+                                <img src="${msg.avatar}" alt="Avatar" class="avatar">
+                                <p class="text">${msg.text}</p>
+                              </div>`;
+                const messageElement = createMessageElement(html, msg.type);
+                chatList.appendChild(messageElement);
+            });
+        }
+    } catch (error) {
+        console.error('Erro ao carregar mensagens do localStorage:', error);
+        localStorage.removeItem('savedChats');  // Remove dados inválidos
+    }
+
     chatList.scrollTo(0, chatList.scrollHeight);
-
     updateSubtitle();
 };
+
+// Adiciona evento para redirecionar à tela inicial após atualizar a página
+window.addEventListener('beforeunload', () => {
+    localStorage.removeItem('savedChats'); // Opcional: remove os chats ao atualizar a página
+});
 
 loadLocalStorageData();
 
@@ -189,12 +217,18 @@ const showLoadingAnimation = () => {
 };
 
 const copyMessage = (copyIcon) => {
-    const messageText = copyIcon.parentElement.querySelector(".text").innerHTML;
+    const messageText = copyIcon.parentElement.querySelector(".text").innerText; // Use innerText
 
-    navigator.clipboard.writeText(messageText);
-    copyIcon.textContent = "done";
-    setTimeout(() => copyIcon.innerHTML = "content_copy", 1000);
-}
+    navigator.clipboard.writeText(messageText)
+        .then(() => {
+            copyIcon.textContent = "done";
+            setTimeout(() => copyIcon.innerHTML = "content_copy", 1000);
+        })
+        .catch(err => {
+            console.error("Erro ao copiar: ", err);
+        });
+};
+
 
 const handleOutGoingChat = () => {
     userMessage = typingForm.querySelector('.typing-input').value.trim() || userMessage;
